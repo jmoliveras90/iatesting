@@ -1,0 +1,54 @@
+﻿<Window x:Class="EmailManager.Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EmailManager.Client"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Botón de Login -->
+        <Button Name="LoginButton" Content="Login to Microsoft Graph" Height="30" Margin="10"
+                Click="LoginButton_Click"/>
+
+        <!-- Contenido principal -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Lista de carpetas -->
+            <ListBox Name="FoldersList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                     SelectionChanged="FoldersList_SelectionChanged" Margin="10">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding DisplayName}" FontWeight="Bold"/>                            
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+            <!-- Lista de correos -->
+            <ListBox Name="EmailsList" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                     Margin="10">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Subject}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding ReceivedDateTime}" FontSize="12"/>
+                            <TextBlock Text="{Binding From}" FontSize="12" Foreground="Gray"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+</Window>
