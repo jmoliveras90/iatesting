@@ -12,9 +12,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Botón de Login -->
-        <Button Name="LoginButton" Content="Login to Microsoft Graph" Height="30" Margin="10"
-                Click="LoginButton_Click"/>
+        <!-- Botones de Login -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">
+            <Button Name="LoginGoogleButton" Content="Login with Google" Width="200" Height="40" Click="LoginGoogleButton_Click" Margin="5"/>
+            <Button Name="LoginMicrosoftButton" Content="Login with Microsoft" Width="200" Height="40" Click="LoginMicrosoftButton_Click" Margin="5"/>
+        </StackPanel>
 
         <!-- Contenido principal -->
         <Grid Grid.Row="1">
@@ -23,28 +25,25 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Lista de carpetas -->
+            <!-- Lista de Carpetas -->
             <ListBox Name="FoldersList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                      SelectionChanged="FoldersList_SelectionChanged" Margin="10">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding DisplayName}" FontWeight="Bold"/>                            
-                        </StackPanel>
+                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-
             </ListBox>
 
-            <!-- Lista de correos -->
-            <ListBox Name="EmailsList" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+            <!-- Lista de Correos -->
+            <ListBox Name="EmailsList" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      Margin="10">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                             <TextBlock Text="{Binding Subject}" FontWeight="Bold"/>
                             <TextBlock Text="{Binding ReceivedDateTime}" FontSize="12"/>
-                            <TextBlock Text="{Binding From}" FontSize="12" Foreground="Gray"/>
+                            <TextBlock Text="{Binding Sender}" FontSize="12" Foreground="Gray"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

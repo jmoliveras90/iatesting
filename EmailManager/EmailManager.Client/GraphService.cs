@@ -15,27 +15,28 @@ namespace EmailManager.Client
         {
             _graphClient = new GraphServiceClient(new HttpClient
             {
-                DefaultRequestHeaders =            {
-                Authorization = new AuthenticationHeaderValue("Bearer", accessToken)
-            }
+                DefaultRequestHeaders =            
+                {
+                    Authorization = new AuthenticationHeaderValue("Bearer", accessToken)
+                }
             });
         }
 
         public async Task<IEnumerable<Folder>> GetMailFoldersAsync()
         {
             var folders = await _graphClient.Me.MailFolders
-                                           .GetAsync(); // Cambia .Request().GetAsync() a .GetAsync()
+                                           .GetAsync();
             return folders.Value.Select(folder => new Folder
             {
                 Id = folder.Id,
-                DisplayName = folder.DisplayName
+                Name = folder.DisplayName
             }).ToList();
-        }     
+        }
 
         public async Task<IEnumerable<Email>> GetEmailsFromFolderAsync(string folderId)
         {
             // Obtiene los correos electrónicos de una carpeta específica
-            var emails = await _graphClient.Me.MailFolders[folderId].Messages      
+            var emails = await _graphClient.Me.MailFolders[folderId].Messages
                 .GetAsync();
 
             return emails.Value.Select(message => new Email
