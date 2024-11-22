@@ -1,5 +1,4 @@
-﻿using Microsoft.Graph.Models;
-using Microsoft.Graph;
+﻿using Microsoft.Graph;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using Folder = EmailManager.Client.Model.Folder;
@@ -26,22 +25,33 @@ namespace EmailManager.Client
         {
             var folders = await _graphClient.Me.MailFolders
                                            .GetAsync();
+
+            if (folders == null || folders.Value == null || folders.Value.Count == 0)
+            {
+                return [];
+            }
+
             return folders.Value.Select(folder => new Folder
             {
-                Id = folder.Id,
-                Name = folder.DisplayName
-            }).ToList();
+                Id = folder.Id ?? string.Empty,
+                Name = folder.DisplayName ?? string.Empty
+            }).ToList() ?? [];
         }
 
         public async Task<IEnumerable<Email>> GetEmailsFromFolderAsync(string folderId)
         {
             // Obtiene los correos electrónicos de una carpeta específica
             var emails = await _graphClient.Me.MailFolders[folderId].Messages
-                .GetAsync();
+            .GetAsync();
+
+            if (emails == null || emails.Value == null || emails.Value.Count == 0)
+            {
+                return [];
+            }
 
             return emails.Value.Select(message => new Email
             {
-                Subject = message.Subject,
+                Subject = message.Subject ?? string.Empty,
                 ReceivedDateTime = message.ReceivedDateTime,
                 Sender = message.From?.EmailAddress?.Address ?? "Unknown"
             }).ToList();

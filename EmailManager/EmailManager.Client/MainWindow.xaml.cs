@@ -1,4 +1,5 @@
-﻿using EmailManager.Client.Model;
+﻿using EmailManager.Client.Enum;
+using EmailManager.Client.Model;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
@@ -12,11 +13,11 @@ namespace EmailManager.Client
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {       
+    {
         private GmailService _gmailService;
         private ConfigService _configService = new ConfigService();
         private GraphServiceClient _microsoftGraphClient;
-        private string _currentProvider;
+        private Provider _currentProvider;
         private AuthService _authService;
         private GraphService _graphService;
 
@@ -39,28 +40,19 @@ namespace EmailManager.Client
             try
             {
                 EmailsList.ItemsSource = null;
-
-                if (_currentProvider == "Google")
-                {
-                    // Cargar correos de Google
-                    await LoadEmailsFromGoogleAsync(selectedFolder.Id);
-                }
-                else if (_currentProvider == "Microsoft")
-                {
-                    // Cargar correos de Microsoft
-                    await LoadEmailsFromMicrosoftAsync(selectedFolder.Id);
-                }
+                EmailsList.ItemsSource = await MailService.LoadEmailsAsync(_gmailService, _graphService, _currentProvider, selectedFolder.Id);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to load emails: {ex.Message}");
             }
         }
+
         private async void LoginGoogleButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                _currentProvider = "Google";
+                _currentProvider = Provider.Google;
 
                 // Autenticación con Google
                 var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -92,9 +84,9 @@ namespace EmailManager.Client
         {
             try
             {
-                _currentProvider = "Microsoft";
+                _currentProvider = Provider.Microsoft;
                 // Inicia sesión y configura el servicio Graph
-                var token = await _authService.GetAccessTokenAsync(new[] { "Mail.Read" });
+                var token = await _authService.GetAccessTokenAsync(["Mail.Read"]);
                 _graphService = new GraphService(token);
 
                 MessageBox.Show("Inicio de sesión exitoso.");
@@ -114,67 +106,12 @@ namespace EmailManager.Client
                 FoldersList.ItemsSource = null;
                 EmailsList.ItemsSource = null;
 
-                if (_currentProvider == "Google")
-                {
-                    // Cargar carpetas de Google
-                    var labels = await _gmailService.Users.Labels.List("me").ExecuteAsync();
-                    FoldersList.ItemsSource = labels.Labels.Select(label => new Folder
-                    {
-                        Id = label.Id,
-                        Name = label.Name
-                    }).ToList();
-                }
-                else if (_currentProvider == "Microsoft")
-                {
-                    // Cargar carpetas de Microsoft
-                    var mailFolders = await _graphService.GetMailFoldersAsync();                   
-
-                    FoldersList.ItemsSource = mailFolders.Select(folder => new Folder
-                    {
-                        Id = folder.Id,
-                        Name = folder.Name
-                    }).ToList();
-                }
+                FoldersList.ItemsSource = await MailService.LoadFoldersAsync(_gmailService, _graphService, _currentProvider);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to load folders: {ex.Message}");
             }
-        }
-
-        private async Task LoadEmailsFromGoogleAsync(string folderId)
-        {
-            var request = _gmailService.Users.Messages.List("me");
-            request.LabelIds = new List<string> { folderId };
-            request.MaxResults = 20;
-
-            var response = await request.ExecuteAsync();
-            var emails = new List<Email>();
-
-            if (response.Messages != null)
-            {
-                foreach (var message in response.Messages)
-                {
-                    var email = await _gmailService.Users.Messages.Get("me", message.Id).ExecuteAsync();
-                    emails.Add(new Email
-                    {
-                        Subject = email.Payload.Headers.FirstOrDefault(h => h.Name == "Subject")?.Value,
-                        Sender = email.Payload.Headers.FirstOrDefault(h => h.Name == "From")?.Value,
-                        ReceivedDateTime = email.InternalDate.HasValue
-                            ? DateTimeOffset.FromUnixTimeMilliseconds(email.InternalDate.Value)
-                            : null
-                    });
-                }
-            }
-
-            EmailsList.ItemsSource = emails;
-        }
-
-        private async Task LoadEmailsFromMicrosoftAsync(string folderId)
-        {
-            var messages = await _graphService.GetEmailsFromFolderAsync(folderId);
-
-            EmailsList.ItemsSource = messages;
         }
     }
 }
