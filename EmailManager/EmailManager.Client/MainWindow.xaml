@@ -9,7 +9,11 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <!-- Botones de login -->
+            <RowDefinition Height="3*"/>
+            <!-- Listas de carpetas y correos -->
+            <RowDefinition Height="5*"/>
+            <!-- Contenido del correo -->
         </Grid.RowDefinitions>
 
         <!-- Botones de Login -->
@@ -22,7 +26,9 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
+                <!-- Lista de carpetas -->
                 <ColumnDefinition Width="3*"/>
+                <!-- Lista de correos -->
             </Grid.ColumnDefinitions>
 
             <!-- Lista de Carpetas -->
@@ -37,7 +43,7 @@
 
             <!-- Lista de Correos -->
             <ListBox Name="EmailsList" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     Margin="10">
+                     SelectionChanged="EmailsList_SelectionChanged" Margin="10">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
@@ -49,5 +55,8 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
+
+        <!-- Contenido del Correo -->
+        <WebBrowser Name="EmailContentWebBrowser" Grid.Row="2" Margin="10"/>
     </Grid>
 </Window>

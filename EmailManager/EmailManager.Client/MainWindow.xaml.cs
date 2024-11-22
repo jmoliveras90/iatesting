@@ -48,6 +48,33 @@ namespace EmailManager.Client
             }
         }
 
+        private async void EmailsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedEmail = EmailsList.SelectedItem as Email;
+            if (selectedEmail == null)
+                return;
+
+            try
+            {
+
+                var content = await MailService.LoadEmailAsync(_gmailService, _graphService, _currentProvider, selectedEmail.Id);
+
+                if (_currentProvider == Provider.Google)
+                {
+                    EmailContentWebBrowser.NavigateToString(content); // Cargar HTML en el navegador
+                }
+                else if (_currentProvider == Provider.Microsoft)
+                {
+                    EmailContentWebBrowser.NavigateToString($"<html><body>{content}</body></html>");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load email content: {ex.Message}");
+            }
+        }
+
+
         private async void LoginGoogleButton_Click(object sender, RoutedEventArgs e)
         {
             try

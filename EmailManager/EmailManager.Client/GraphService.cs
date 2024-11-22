@@ -51,10 +51,18 @@ namespace EmailManager.Client
 
             return emails.Value.Select(message => new Email
             {
+                Id = message.Id ?? string.Empty,
                 Subject = message.Subject ?? string.Empty,
                 ReceivedDateTime = message.ReceivedDateTime,
                 Sender = message.From?.EmailAddress?.Address ?? "Unknown"
             }).ToList();
+        }
+
+        public async Task<string> GetEmail(string emailId)
+        {
+            var mail = await _graphClient.Me.Messages[emailId].GetAsync();
+
+            return mail?.Body?.Content ?? string.Empty;
         }
     }
 }

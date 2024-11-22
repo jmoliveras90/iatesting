@@ -71,7 +71,8 @@ namespace EmailManager.Client
                                 {
                                     var email = await gmailService.Users.Messages.Get("me", message.Id).ExecuteAsync();
                                     result.Add(new Email
-                                    {
+                                    { 
+                                        Id = email.Id,
                                         Subject = email.Payload.Headers.FirstOrDefault(h => h.Name == "Subject")?.Value ?? string.Empty,
                                         Sender = email.Payload.Headers.FirstOrDefault(h => h.Name == "From")?.Value ?? string.Empty,
                                         ReceivedDateTime = email.InternalDate.HasValue
@@ -94,6 +95,42 @@ namespace EmailManager.Client
             }
 
             return result;
+        }
+
+        public static async Task<string> LoadEmailAsync(GmailService gmailService,
+        GraphService graphService, Provider provider, string emailId)
+        {
+            List<Email> result = [];
+
+            try
+            {
+                switch (provider)
+                {
+                    case Provider.Google:
+                        {
+                            var email = await gmailService.Users.Messages.Get("me", emailId).ExecuteAsync();
+
+                            // Buscar el contenido del correo
+                            var part = email.Payload?.Parts?.FirstOrDefault(p => p.MimeType == "text/html");
+
+                            if (part?.Body?.Data != null)
+                            {
+                                var contentBytes = Convert.FromBase64String(part.Body.Data.Replace('-', '+').Replace('_', '/'));
+                                return System.Text.Encoding.UTF8.GetString(contentBytes);
+                            }
+
+                            return string.Empty;
+                        }
+                    case Provider.Microsoft:
+                        return await graphService.GetEmail(emailId);      
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load folders: {ex.Message}");
+            }
+
+            return string.Empty;
         }
     }
 }
