@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using Folder = EmailManager.Client.Model.Folder;
 using EmailManager.Client.Model;
+using System.Windows;
 
 namespace EmailManager.Client
 {
@@ -64,6 +65,46 @@ namespace EmailManager.Client
 
             return mail?.Body?.Content ?? string.Empty;
         }
+
+        private async Task SendEmailAsync(string recipient, string subject, string body)
+        {
+            //try
+            //{
+            //    // Crear el mensaje de correo
+            //    var message = new Microsoft.Graph.Message
+            //    {
+            //        Subject = subject,
+            //        Body = new Microsoft.Graph.ItemBody
+            //        {
+            //            ContentType = Microsoft.Graph.BodyType.Html,
+            //            Content = body
+            //        },
+            //        ToRecipients = new List<Microsoft.Graph.Recipient>
+            //{
+            //    new Microsoft.Graph.Recipient
+            //    {
+            //        EmailAddress = new Microsoft.Graph.EmailAddress
+            //        {
+            //            Address = recipient
+            //        }
+            //    }
+            //}
+            //    };
+
+            //    // Enviar el correo
+            //    await _graphClient.Me.
+            //        .SendMail(message, null)
+            //        .Request()
+            //        .PostAsync();
+
+            //    MessageBox.Show("Email sent successfully (Microsoft)!");
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Failed to send email (Microsoft): {ex.Message}");
+            //}
+        }
+
     }
 }
 

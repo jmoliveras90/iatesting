@@ -20,6 +20,9 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">
             <Button Name="LoginGoogleButton" Content="Login with Google" Width="200" Height="40" Click="LoginGoogleButton_Click" Margin="5"/>
             <Button Name="LoginMicrosoftButton" Content="Login with Microsoft" Width="200" Height="40" Click="LoginMicrosoftButton_Click" Margin="5"/>
+            <Button Name="ComposeEmailButton" Content="Compose Email" Width="200" Height="40"
+        HorizontalAlignment="Center" VerticalAlignment="Top" Click="ComposeEmailButton_Click" />
+
         </StackPanel>
 
         <!-- Contenido principal -->

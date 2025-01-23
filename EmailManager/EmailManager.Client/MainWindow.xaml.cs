@@ -4,6 +4,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 using Microsoft.Graph;
+using System.IdentityModel.Tokens.Jwt;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -88,9 +89,12 @@ namespace EmailManager.Client
                         ClientId = _configService.GetConfigValue("Google:ClientId"),
                         ClientSecret = _configService.GetConfigValue("Google:ClientSecret")
                     },
-                    new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailLabels },
+                    new[] { "https://www.googleapis.com/auth/userinfo.profile", GmailService.Scope.GmailSend, GmailService.Scope.GmailReadonly, GmailService.Scope.GmailLabels },
                     "user",
                     CancellationToken.None);
+
+             //   await credential.RevokeTokenAsync(CancellationToken.None);       
+               
 
                 _gmailService = new GmailService(new BaseClientService.Initializer
                 {
@@ -139,6 +143,12 @@ namespace EmailManager.Client
             {
                 MessageBox.Show($"Failed to load folders: {ex.Message}");
             }
+        }
+
+        private void ComposeEmailButton_Click(object sender, RoutedEventArgs e)
+        {
+            var sendEmailWindow = new SendEmailWindow(_gmailService, _microsoftGraphClient);
+            sendEmailWindow.Show();
         }
     }
 }

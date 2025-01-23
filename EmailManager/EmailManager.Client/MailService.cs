@@ -1,9 +1,15 @@
 ﻿using EmailManager.Client.Enum;
 using EmailManager.Client.Model;
 using Google.Apis.Gmail.v1;
+using Google.Apis.Services;
 using Microsoft.Graph.Models;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using MimeKit;
 using System.Windows;
 using Folder = EmailManager.Client.Model.Folder;
+using Google.Apis.PeopleService.v1;
+using Google.Apis.PeopleService.v1.Data;
+using Google.Apis.Services;
 
 namespace EmailManager.Client
 {
@@ -131,6 +137,69 @@ namespace EmailManager.Client
             }
 
             return string.Empty;
+        }
+
+        public static async Task SendEmail(Provider provider, GmailService gmailService, string recipient, string subject, string body)
+        {
+            switch (provider)
+            {
+                case Provider.Google:
+                    {
+                        await SendEmailViaGmailAsync(gmailService, recipient, subject, body);
+                    }
+                    break;
+                case Provider.Microsoft:
+                    {
+
+                    }
+                    break;
+            }
+        }
+
+        private static async Task SendEmailViaGmailAsync(GmailService gmailService, string recipient, string subject, string body)
+        {
+            try
+            {
+                var peopleService = new PeopleServiceService(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = gmailService.HttpClientInitializer,
+                    ApplicationName = "Email Manager"
+                });
+
+                var request = peopleService.People.Get("people/me");
+                request.PersonFields = "names,emailAddresses"; // Define los campos que necesitas
+
+                var profile = await request.ExecuteAsync();
+
+                // Accede al nombre del usuario
+                var name = profile.Names?.FirstOrDefault()?.DisplayName;        
+                var email = profile.EmailAddresses?.FirstOrDefault()?.Value;
+
+                var mimeMessage = new MimeKit.MimeMessage();
+                mimeMessage.From.Add(new MailboxAddress(name, string.Empty));
+                mimeMessage.To.Add(new MimeKit.MailboxAddress("", recipient));
+                mimeMessage.Subject = subject;
+
+                mimeMessage.Body = new MimeKit.TextPart("html")
+                {
+                    Text = body
+                };
+
+                // Convertir el mensaje MIME a base64 URL-safe
+                var rawMessage = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(mimeMessage.ToString()))
+                    .Replace('+', '-').Replace('/', '_').Replace("=", "");
+
+                // Enviar el correo
+                var message = new Google.Apis.Gmail.v1.Data.Message { Raw = rawMessage };
+                await gmailService.Users.Messages.Send(message, "me").ExecuteAsync();
+
+               // MessageBox.Show("Email sent successfully (Gmail)!");
+            }
+            catch (Exception ex)
+            {
+                throw;
+              //  MessageBox.Show($"Failed to send email (Gmail): {ex.Message}");
+            }
         }
     }
 }
