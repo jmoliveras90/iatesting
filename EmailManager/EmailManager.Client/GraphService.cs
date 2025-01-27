@@ -102,13 +102,18 @@ namespace EmailManager.Client
                     .SendMail
                     .PostAsync(requestBody);
 
-                // MessageBox.Show("Email sent successfully (Microsoft)!");
+                 MessageBox.Show("Email sent successfully (Microsoft)!");
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to send email (Microsoft): {ex.Message}");
                 throw;
             }
+        }
+
+        public async Task<User?> GetUserData()
+        {
+            return await _graphClient.Me.GetAsync();
         }
     }
 }
