@@ -32,7 +32,7 @@
         <!-- Botones de envío -->
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" Margin="5">
             <!--<Button Name="SendViaMicrosoftButton" Content="Send via Microsoft" Click="SendViaMicrosoft_Click" Margin="5"/>-->
-            <Button Name="SendViaGmailButton" Content="Send via Gmail" Click="SendViaGmail_Click" Margin="5"/>
+            <Button Name="SendButton" Content="Send" Click="Send_Click" Margin="5"/>
         </StackPanel>
     </Grid>
 </Window>

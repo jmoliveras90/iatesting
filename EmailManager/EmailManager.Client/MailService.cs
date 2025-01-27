@@ -139,7 +139,7 @@ namespace EmailManager.Client
             return string.Empty;
         }
 
-        public static async Task SendEmail(Provider provider, GmailService gmailService, string recipient, string subject, string body)
+        public static async Task SendEmail(Provider provider, GraphService graphService, GmailService gmailService, string recipient, string subject, string body)
         {
             switch (provider)
             {
@@ -150,7 +150,7 @@ namespace EmailManager.Client
                     break;
                 case Provider.Microsoft:
                     {
-
+                        await graphService.SendEmailAsync(recipient, subject, body);
                     }
                     break;
             }

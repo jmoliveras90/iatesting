@@ -15,41 +15,18 @@ namespace EmailManager.Client
     public partial class SendEmailWindow : Window
     {
         private GmailService _gmailService;
-        private GraphServiceClient _microsoftGraphClient;
+        private GraphService _graphService;
+        private Provider _provider;
 
-        public SendEmailWindow(GmailService gmailService, GraphServiceClient microsoftGraphClient)
+        public SendEmailWindow(GmailService gmailService, GraphService graphService, Provider provider)
         {
             InitializeComponent();
             _gmailService = gmailService;
-            _microsoftGraphClient = microsoftGraphClient;
+            _graphService = graphService;
+            _provider = provider;
         }
 
-        private async void SendViaMicrosoft_Click(object sender, RoutedEventArgs e)
-        {
-            var recipient = RecipientTextBox.Text;
-            var subject = SubjectTextBox.Text;
-            var body = BodyTextBox.Text;
-
-            if (string.IsNullOrWhiteSpace(recipient) || string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(body))
-            {
-                MessageBox.Show("Please fill in all fields.");
-                return;
-            }
-
-            try
-            {
-
-
-                MessageBox.Show("Email sent successfully (Microsoft)!");
-                this.Close(); // Cierra la ventana después de enviar
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to send email (Microsoft): {ex.Message}");
-            }
-        }
-
-        private async void SendViaGmail_Click(object sender, RoutedEventArgs e)
+        private async void Send_Click(object sender, RoutedEventArgs e)
         {
             var recipient = RecipientTextBox.Text;
             var subject = SubjectTextBox.Text;
@@ -65,15 +42,15 @@ namespace EmailManager.Client
 
             try
             {
-                await MailService.SendEmail(Provider.Google, _gmailService, recipient, subject, body);
-               
-                MessageBox.Show("Email sent successfully (Gmail)!");
-               
+                await MailService.SendEmail(_provider, _graphService, _gmailService, recipient, subject, body);
+
+                MessageBox.Show("Email sent successfully!");
+
             }
             catch (Exception ex)
             {
                 error = true;
-                MessageBox.Show($"Failed to send email (Gmail): {ex.Message}");
+                MessageBox.Show($"Failed to send email: {ex.Message}");
             }
 
             if (!error)

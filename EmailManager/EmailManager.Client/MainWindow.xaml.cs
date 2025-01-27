@@ -117,7 +117,7 @@ namespace EmailManager.Client
             {
                 _currentProvider = Provider.Microsoft;
                 // Inicia sesión y configura el servicio Graph
-                var token = await _authService.GetAccessTokenAsync(["Mail.Read"]);
+                var token = await _authService.GetAccessTokenAsync(["Mail.Read", "Mail.Send"]);
                 _graphService = new GraphService(token);
 
                 MessageBox.Show("Inicio de sesión exitoso.");
@@ -147,7 +147,7 @@ namespace EmailManager.Client
 
         private void ComposeEmailButton_Click(object sender, RoutedEventArgs e)
         {
-            var sendEmailWindow = new SendEmailWindow(_gmailService, _microsoftGraphClient);
+            var sendEmailWindow = new SendEmailWindow(_gmailService, _graphService, _currentProvider);
             sendEmailWindow.Show();
         }
     }
