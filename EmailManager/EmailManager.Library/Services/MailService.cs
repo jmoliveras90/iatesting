@@ -1,17 +1,16 @@
-﻿using EmailManager.Client.Enum;
-using EmailManager.Client.Model;
-using Google.Apis.Gmail.v1;
+﻿using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
-using Microsoft.Graph.Models;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using Folder = EmailManager.Library.Model.Folder;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using EmailManager.Library.Enum;
+using System.Linq;
+using System;
+using EmailManager.Library.Model;
 using MimeKit;
-using System.Windows;
-using Folder = EmailManager.Client.Model.Folder;
 using Google.Apis.PeopleService.v1;
-using Google.Apis.PeopleService.v1.Data;
-using Google.Apis.Services;
 
-namespace EmailManager.Client
+namespace EmailManager.Library.Services
 {
     public static class MailService
     {
@@ -48,16 +47,16 @@ namespace EmailManager.Client
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load folders: {ex.Message}");
+               // MessageBox.Show($"Failed to load folders: {ex.Message}");
             }
 
-            return [];
+            return new List<Folder>();
         }
 
         public static async Task<IEnumerable<Email>> LoadEmailsAsync(GmailService gmailService,
         GraphService graphService, Provider provider, string folderId)
         {
-            List<Email> result = [];
+            List<Email> result = new List<Email>();
 
             try
             {
@@ -83,7 +82,7 @@ namespace EmailManager.Client
                                         Sender = email.Payload.Headers.FirstOrDefault(h => h.Name == "From")?.Value ?? string.Empty,
                                         ReceivedDateTime = email.InternalDate.HasValue
                                             ? DateTimeOffset.FromUnixTimeMilliseconds(email.InternalDate.Value)
-                                            : null
+                                            : (DateTimeOffset?)null
                                     });
                                 }
                             }
@@ -97,7 +96,7 @@ namespace EmailManager.Client
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load folders: {ex.Message}");
+               // MessageBox.Show($"Failed to load folders: {ex.Message}");
             }
 
             return result;
@@ -106,7 +105,7 @@ namespace EmailManager.Client
         public static async Task<string> LoadEmailAsync(GmailService gmailService,
         GraphService graphService, Provider provider, string emailId)
         {
-            List<Email> result = [];
+            List<Email> result = new List<Email>();
 
             try
             {
@@ -133,7 +132,7 @@ namespace EmailManager.Client
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load folders: {ex.Message}");
+               // MessageBox.Show($"Failed to load folders: {ex.Message}");
             }
 
             return string.Empty;

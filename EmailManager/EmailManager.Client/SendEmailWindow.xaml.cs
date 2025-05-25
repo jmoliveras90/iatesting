@@ -1,13 +1,6 @@
-﻿using EmailManager.Client.Enum;
+﻿using EmailManager.Library.Enum;
+using EmailManager.Library.Services;
 using Google.Apis.Gmail.v1;
-using Microsoft.Graph;
-using Microsoft.Graph.Models;
-using MimeKit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace EmailManager.Client

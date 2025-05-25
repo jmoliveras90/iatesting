@@ -1,4 +1,4 @@
-﻿namespace EmailManager.Client.Model
+﻿namespace EmailManager.Library.Model
 {
     public class Folder
     {

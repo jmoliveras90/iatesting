@@ -15,7 +15,7 @@ namespace EmailManager.Client
                 .Build();
         }
 
-        public string GetConfigValue(string key)
+        public string? GetConfigValue(string key)
         {
             return _configuration[key];
         }

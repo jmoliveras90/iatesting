@@ -1,17 +1,32 @@
 ﻿using Microsoft.Identity.Client;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EmailManager.Client
 {
-    public class AuthService(string clientId, string tenantId, string redirectUri)
+    public class AuthService
     {
-        private readonly IPublicClientApplication _app = PublicClientApplicationBuilder.Create(clientId)
-                     .WithAuthority(AzureCloudInstance.AzurePublic, tenantId)
-                     .WithRedirectUri(redirectUri)
+        private readonly IPublicClientApplication _app;
+        public readonly string _clientId;
+        public readonly string _tenantId;
+        public readonly string _redirectUri;
+
+        public AuthService(string clientId, string tenantId, string redirectUri)
+        {
+            _clientId = clientId;
+            _tenantId = tenantId;
+            _redirectUri = redirectUri;
+
+            _app = PublicClientApplicationBuilder.Create(_clientId)
+                     .WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)
+                     .WithRedirectUri(_redirectUri)
                      .Build();
+        }                
 
         public async Task<string> GetAccessTokenAsync(string[] scopes)
         {
             var accounts = await _app.GetAccountsAsync();
+
             try
             {
                 var result = await _app.AcquireTokenSilent(scopes, accounts.FirstOrDefault())

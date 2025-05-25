@@ -1,11 +1,10 @@
-﻿using EmailManager.Client.Enum;
-using EmailManager.Client.Model;
+﻿using EmailManager.Library.Enum;
+using EmailManager.Library.Model;
+using EmailManager.Library.Services;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 using Microsoft.Graph;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -79,7 +78,7 @@ namespace EmailManager.Client
                     "user",
                     CancellationToken.None);
 
-                //   await credential.RevokeTokenAsync(CancellationToken.None);       
+                 //  await credential.RevokeTokenAsync(CancellationToken.None);       
 
 
                 _gmailService = new GmailService(new BaseClientService.Initializer

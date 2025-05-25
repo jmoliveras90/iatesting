@@ -1,14 +1,18 @@
 ﻿using Microsoft.Graph;
 using System.Net.Http.Headers;
 using System.Net.Http;
-using Folder = EmailManager.Client.Model.Folder;
-using EmailManager.Client.Model;
+using Folder = EmailManager.Library.Model.Folder;
+using EmailManager.Library.Model;
 using System.Windows;
 using Microsoft.Graph.Me.SendMail;
 using Microsoft.Graph.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
+using System;
 
 
-namespace EmailManager.Client
+namespace EmailManager.Library.Services
 {
     public class GraphService
     {
@@ -32,14 +36,14 @@ namespace EmailManager.Client
 
             if (folders == null || folders.Value == null || folders.Value.Count == 0)
             {
-                return [];
+                return new List<Folder>();
             }
 
             return folders.Value.Select(folder => new Folder
             {
                 Id = folder.Id ?? string.Empty,
                 Name = folder.DisplayName ?? string.Empty
-            }).ToList() ?? [];
+            }).ToList() ?? new List<Folder>();
         }
 
         public async Task<IEnumerable<Email>> GetEmailsFromFolderAsync(string folderId)
@@ -50,7 +54,7 @@ namespace EmailManager.Client
 
             if (emails == null || emails.Value == null || emails.Value.Count == 0)
             {
-                return [];
+                return new List<Email>();
             }
 
             return emails.Value.Select(message => new Email
@@ -102,11 +106,11 @@ namespace EmailManager.Client
                     .SendMail
                     .PostAsync(requestBody);
 
-                 MessageBox.Show("Email sent successfully (Microsoft)!");
+               //  MessageBox.Show("Email sent successfully (Microsoft)!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to send email (Microsoft): {ex.Message}");
+             //   MessageBox.Show($"Failed to send email (Microsoft): {ex.Message}");
                 throw;
             }
         }

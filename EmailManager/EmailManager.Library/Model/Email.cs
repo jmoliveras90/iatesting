@@ -1,8 +1,10 @@
-﻿namespace EmailManager.Client.Model
+﻿using System;
+
+namespace EmailManager.Library.Model
 {
     public class Email
     {
-        public required string Id { get; set; }
+        public string Id { get; set; }
         public string Subject { get; set; }
         public DateTimeOffset? ReceivedDateTime { get; set; }
         public string Sender { get; set; }

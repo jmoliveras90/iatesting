@@ -1,4 +1,4 @@
-﻿namespace EmailManager.Client.Enum
+﻿namespace EmailManager.Library.Enum
 {
     public enum Provider
     {
